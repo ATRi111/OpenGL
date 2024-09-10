@@ -1,50 +1,10 @@
 #include "GLAD/include/glad/glad.h"
 #include "include/glfw3.h"
 #include<iostream>
+#include"ShaderGenerator.h"
 
-static GLuint CreateShader(const std::string& code, GLenum type)
-{
-    GLuint shader = glCreateShader(type);
-    const char* code_ = code.c_str();
-    glShaderSource(shader, 1, &code_, nullptr);
-    glCompileShader(shader);
 
-    GLint success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) 
-    {
-        GLchar infoLog[512];
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cout << "[Shader Compilation Error]" << infoLog << std::endl;
-    }
-    return shader;
-}
-
-static GLuint CreateProgram(const std::string& vertexShaderCode, const std::string fragmentShaderCode)
-{
-    GLuint program = glCreateProgram();
-    GLuint vertexShader = CreateShader(vertexShaderCode, GL_VERTEX_SHADER);
-    GLuint fragmentShader = CreateShader(fragmentShaderCode, GL_FRAGMENT_SHADER);
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-    glValidateProgram(program);
-
-    GLint success;
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) 
-    {
-        GLchar infoLog[512];
-        glGetProgramInfoLog(program, 512, nullptr, infoLog);
-        std::cout << "[Program Linking Error]" << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    return program;
-}
-
-static void SetContext()
+static void SetContext(const std::string& shaderPath)
 {
     float positions[] = {
         -0.5f,-0.5f,
@@ -63,27 +23,17 @@ static void SetContext()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-    std::string vertexShaderCode =
-        "#version 330 core\n"
-        "layout(location = 0) in vec4 position;"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
-    std::string fragmentShaderCode =
-        "#version 330 core\n"
-        "out vec4 color;"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(1,0.4,0.4,1);\n"
-        "}\n";
-
-    GLuint program = CreateProgram(vertexShaderCode, fragmentShaderCode);
+    std::vector<ShaderSource> shaders = ShaderGenerator::ParseFile(shaderPath);
+    GLuint program = ShaderGenerator::CreateProgram(shaders);
     glUseProgram(program);
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    std::string path = argv[0];
+    path = path.substr(0, path.find("\\OpenGL\\")) + "\\OpenGL\\OpenGL\\Test\\TestShader.shader";
+    std::cout << path << std::endl;
+    
     GLFWwindow* window;
 
     if (!glfwInit())
@@ -104,7 +54,7 @@ int main(void)
         return -1;
     }
 
-    SetContext();
+    SetContext(path);
 
     while (!glfwWindowShouldClose(window))
     {

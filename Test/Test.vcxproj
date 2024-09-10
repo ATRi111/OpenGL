@@ -26,6 +26,12 @@
       <Project>{8848e90e-1e4f-456a-838a-46e46474bdff}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TestShader.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ShaderGenerator.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
