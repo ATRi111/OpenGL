@@ -30,6 +30,8 @@ static void APIENTRY DebugCallback(
     std::cout << "GLDebug: " << message << std::endl;
 }
 
+GLuint program;
+
 static void SetContext(const string& shaderPath)
 {
     GLuint VBO = BufferGenerator::GenVBO(positions, sizeof(positions), GL_STATIC_DRAW);
@@ -40,7 +42,7 @@ static void SetContext(const string& shaderPath)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
     vector<ShaderSource> shaders = ShaderGenerator::ParseFile(shaderPath);
-    GLuint program = ShaderGenerator::GenProgram(shaders);
+    program = ShaderGenerator::GenProgram(shaders);
     glUseProgram(program);
 }
 
@@ -73,6 +75,8 @@ int main(int argc, char* argv[])
     glDebugMessageCallback(DebugCallback, nullptr);
 
     SetContext(path);
+    int location = glGetUniformLocation(program, "u_Color");
+    glUniform4f(location, 1, 0, 1, 1);
 
     while (!glfwWindowShouldClose(window))
     {
