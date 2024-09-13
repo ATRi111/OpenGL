@@ -1,5 +1,4 @@
-#include"GLibrary/ShaderGenerator.h"
-#include"GLibrary/BufferGenerator.h"
+#include "GLibrary/GLibrary.h"
 #include "include/glfw3.h"
 using namespace GLibrary;
 using namespace std;
@@ -30,22 +29,6 @@ static void APIENTRY DebugCallback(
     std::cout << "GLDebug: " << message << std::endl;
 }
 
-GLuint program;
-
-static void SetContext(const string& shaderPath)
-{
-    GLuint VBO = BufferGenerator::GenVBO(positions, sizeof(positions), GL_STATIC_DRAW);
-    GLuint VAO = BufferGenerator::GenVAO();
-    GLuint IBO = BufferGenerator::GenIBO(indicies, sizeof(indicies), GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-
-    vector<ShaderSource> shaders = ShaderGenerator::ParseFile(shaderPath);
-    program = ShaderGenerator::GenProgram(shaders);
-    glUseProgram(program);
-}
-
 int main(int argc, char* argv[])
 {
     string path = argv[0];
@@ -74,7 +57,17 @@ int main(int argc, char* argv[])
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(DebugCallback, nullptr);
 
-    SetContext(path);
+    VertexArray VAO;
+    VertexBuffer VBO(positions, sizeof(positions), GL_STATIC_DRAW);
+    IndexBuffer IBO(indicies, sizeof(indicies), GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+    vector<ShaderSource> shaders = ShaderGenerator::ParseFile(path);
+    GLuint program = ShaderGenerator::GenProgram(shaders);
+    glUseProgram(program);
+
     int location = glGetUniformLocation(program, "u_Color");
     glUniform4f(location, 1, 0, 1, 1);
 

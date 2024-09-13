@@ -129,16 +129,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BufferGenerator.h" />
+    <ClInclude Include="GLibrary.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="MeshHelper.h" />
+    <ClInclude Include="RendererBase.h" />
     <ClInclude Include="ShaderGenerator.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GLibrary.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BufferGenerator.cpp" />
-    <ClCompile Include="MeshHelper.cpp" />
+    <ClCompile Include="GLibrary.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,7 +21,22 @@
     <ClInclude Include="MeshHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BufferGenerator.h">
+    <ClInclude Include="RendererBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLibrary.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -31,10 +46,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MeshHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BufferGenerator.cpp">
+    <ClCompile Include="GLibrary.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
