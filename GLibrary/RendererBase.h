@@ -8,7 +8,7 @@ namespace GLibrary
 	class RendererBase
 	{
 	protected:
-		GLuint id;
+		unsigned int id;
 	public:
 		VertexBuffer* VBO;
 		IndexBuffer* IBO;

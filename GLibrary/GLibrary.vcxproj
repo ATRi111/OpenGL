@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="General.h" />
     <ClInclude Include="GLibrary.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="MeshHelper.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GLibrary.rc" />

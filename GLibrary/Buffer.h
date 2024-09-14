@@ -6,9 +6,9 @@ namespace GLibrary
 	class Buffer
 	{
 	protected:
-		GLuint id;
+		unsigned int id;
 	public:
-		Buffer(const void* data, GLsizeiptr size, GLenum usage)
+		Buffer(const void* data, unsigned long size, unsigned int usage)
 		{
 			glGenBuffers(1, &id);
 		}
@@ -17,11 +17,11 @@ namespace GLibrary
 			glDeleteBuffers(1, &id);
 		}
 
-		virtual GLenum GetType() const
+		virtual unsigned int GetType() const
 		{
 			return 0;
 		}
-		GLuint ID() const
+		unsigned int ID() const
 		{
 			return id;
 		}

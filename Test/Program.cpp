@@ -11,17 +11,17 @@ float positions[] =
     -0.5f,0.5f
 };
 
-GLuint indicies[] =
+unsigned int indicies[] =
 {
     0,1,2,
     2,3,0,
 };
 
 static void APIENTRY DebugCallback(
-    GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
+    unsigned int source,
+    unsigned int type,
+    unsigned int id,
+    unsigned int severity,
     GLsizei length,
     const GLchar* message,
     const void* userParam) 
@@ -61,11 +61,12 @@ int main(int argc, char* argv[])
     VertexBuffer VBO(positions, sizeof(positions), GL_STATIC_DRAW);
     IndexBuffer IBO(indicies, sizeof(indicies), GL_STATIC_DRAW);
     
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    VertexBufferLayout layout;
+    layout.AddProperty<float>(0, 2);
+    VAO.SetLayout(layout);
 
     vector<ShaderSource> shaders = ShaderGenerator::ParseFile(path);
-    GLuint program = ShaderGenerator::GenProgram(shaders);
+    unsigned int program = ShaderGenerator::GenProgram(shaders);
     glUseProgram(program);
 
     int location = glGetUniformLocation(program, "u_Color");

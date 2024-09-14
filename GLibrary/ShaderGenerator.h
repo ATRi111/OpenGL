@@ -11,9 +11,9 @@ namespace GLibrary
     struct ShaderSource
     {
         std::string code;
-        GLenum type;
+        unsigned int type;
 
-        ShaderSource(std::string sourceCode, GLenum type)
+        ShaderSource(std::string sourceCode, unsigned int type)
         {
             this->code = sourceCode;
             this->type = type;
@@ -29,9 +29,9 @@ namespace GLibrary
     class ShaderGenerator
     {
     public:
-        static GLuint GenShader(const std::string& code, GLenum type)
+        static unsigned int GenShader(const std::string& code, unsigned int type)
         {
-            GLuint shader = glCreateShader(type);
+            unsigned int shader = glCreateShader(type);
             const char* code_ = code.c_str();
             glShaderSource(shader, 1, &code_, nullptr);
             glCompileShader(shader);
@@ -48,12 +48,12 @@ namespace GLibrary
             return shader;
         }
 
-        static GLuint GenProgram(std::vector<ShaderSource> shaders)
+        static unsigned int GenProgram(std::vector<ShaderSource> shaders)
         {
-            GLuint program = glCreateProgram();
+            unsigned int program = glCreateProgram();
             for (int i = 0; i < shaders.size(); i++)
             {
-                GLuint shader = GenShader(shaders[i].code, shaders[i].type);
+                unsigned int shader = GenShader(shaders[i].code, shaders[i].type);
                 if (shader != -1)
                 {
                     glAttachShader(program, shader);
@@ -80,7 +80,7 @@ namespace GLibrary
             std::string line;
             std::ifstream stream(filepath);
             std::stringstream currentCode;
-            GLenum currentType = GL_NONE;
+            unsigned int currentType = GL_NONE;
             std::vector<ShaderSource> ret;
 
             while (getline(stream, line))

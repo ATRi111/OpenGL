@@ -1,12 +1,13 @@
 #pragma once
-#include "GLAD/include/glad/glad.h"
+#include"GLAD/include/glad/glad.h"
+#include"VertexBufferLayout.h"
 
 namespace GLibrary
 {
 	class VertexArray
 	{
 	private:
-		GLuint id;
+		unsigned int id;
 	public:
 		VertexArray()
 		{
@@ -18,7 +19,7 @@ namespace GLibrary
 			glDeleteVertexArrays(1, &id);
 		}
 
-		GLuint ID() const
+		unsigned int ID() const
 		{
 			return id;
 		}
@@ -30,6 +31,20 @@ namespace GLibrary
 		void Unbind() const
 		{
 			glBindVertexArray(0);
+		}
+
+		void SetLayout(const VertexBufferLayout& layout) const
+		{
+			Bind();
+			const std::vector<VertexPropertyLayout>& properties = layout.Properties();
+			unsigned long offset = 0;
+			for (int i = 0; i < properties.size(); i++)
+			{
+				const VertexPropertyLayout& p = properties[i];
+				glEnableVertexAttribArray(p.index);
+				glVertexAttribPointer(p.index, p.count, p.type, p.normalized, layout.Stride(), (const void*)offset);
+				offset += p.Size();
+			}
 		}
 	};
 }
