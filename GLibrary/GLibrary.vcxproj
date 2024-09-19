@@ -133,7 +133,7 @@
     <ClInclude Include="GLibrary.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="MeshHelper.h" />
-    <ClInclude Include="RendererBase.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />

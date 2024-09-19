@@ -13,7 +13,7 @@ namespace GLibrary
 			glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 		}
 
-		unsigned int GetType() const override
+		unsigned int BufferType() const override
 		{
 			return GL_ARRAY_BUFFER;
 		}

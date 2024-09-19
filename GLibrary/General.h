@@ -1,5 +1,5 @@
 #pragma once
-#include "GLAD/include/glad/glad.h"
+#include"GLAD/include/glad/glad.h"
 
 namespace GLibrary
 {

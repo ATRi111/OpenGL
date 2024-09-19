@@ -57,13 +57,13 @@ int main(int argc, char* argv[])
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(DebugCallback, nullptr);
 
-    VertexArray VAO;
-    VertexBuffer VBO(positions, sizeof(positions), GL_STATIC_DRAW);
-    IndexBuffer IBO(indicies, sizeof(indicies), GL_STATIC_DRAW);
+    VertexArray va;
+    VertexBuffer vb(positions, sizeof(positions), GL_STATIC_DRAW);
+    IndexBuffer ib(indicies, sizeof(indicies), GL_STATIC_DRAW);
     
     VertexBufferLayout layout;
     layout.AddProperty<float>(0, 2);
-    VAO.SetLayout(layout);
+    va.SetLayout(layout);
 
     ShaderProgram program = ShaderProgram::Parse(path);
     program.Link();
@@ -71,10 +71,12 @@ int main(int argc, char* argv[])
 
     program.SetUniform4f("u_Color", 1, 0, 1, 1);
 
+    Renderer renderer;
+
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(indicies[0]), GL_UNSIGNED_INT, 0);
+        renderer.Clear();
+        renderer.Draw(va, ib, program);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

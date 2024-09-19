@@ -17,7 +17,7 @@ namespace GLibrary
 			glDeleteBuffers(1, &id);
 		}
 
-		virtual unsigned int GetType() const = 0;
+		virtual unsigned int BufferType() const = 0;
 
 		unsigned int ID() const
 		{
@@ -26,11 +26,11 @@ namespace GLibrary
 
 		virtual void Bind() const
 		{
-			glBindBuffer(GetType(), id);
+			glBindBuffer(BufferType(), id);
 		}
 		virtual void Unbind() const
 		{
-			glBindBuffer(GetType(), 0);
+			glBindBuffer(BufferType(), 0);
 		}
 	};
 }
