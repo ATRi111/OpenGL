@@ -17,10 +17,8 @@ namespace GLibrary
 			glDeleteBuffers(1, &id);
 		}
 
-		virtual unsigned int GetType() const
-		{
-			return 0;
-		}
+		virtual unsigned int GetType() const = 0;
+
 		unsigned int ID() const
 		{
 			return id;

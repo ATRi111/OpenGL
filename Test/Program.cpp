@@ -65,12 +65,11 @@ int main(int argc, char* argv[])
     layout.AddProperty<float>(0, 2);
     VAO.SetLayout(layout);
 
-    vector<ShaderSource> shaders = ShaderGenerator::ParseFile(path);
-    unsigned int program = ShaderGenerator::GenProgram(shaders);
-    glUseProgram(program);
+    ShaderProgram program = ShaderProgram::Parse(path);
+    program.Link();
+    program.Bind();
 
-    int location = glGetUniformLocation(program, "u_Color");
-    glUniform4f(location, 1, 0, 1, 1);
+    program.SetUniform4f("u_Color", 1, 0, 1, 1);
 
     while (!glfwWindowShouldClose(window))
     {
