@@ -1,14 +1,17 @@
 #include"GLibrary/GLibrary.h"
 #include"include/glfw3.h"
+#include"GLibrary/glm/glm.hpp"
+#include"GLibrary/glm/ext/matrix_clip_space.hpp"
+
 using namespace GLibrary;
 using namespace std;
 
 float vertices[] = 
 {
-    -0.5f,-0.5f,0,0,
-    0.5f,-0.5f,1,0,
-    0.5f,0.5f,1,1,
-    -0.5f,0.5f,0,1,
+    -0.8f,-0.5f,0,0,
+    0.8f,-0.5f,1,0,
+    0.8f,0.5f,1,1,
+    -0.8f,0.5f,0,1,
 };
 
 unsigned int indicies[] =
@@ -74,8 +77,11 @@ int main(int argc, char* argv[])
     ShaderProgram program = ShaderProgram::ParseFile(shaderPath);
     program.Link();
     program.Bind();
+
     program.SetUniform4f("u_Color", 1, 0, 1, 1);
     program.SetUniform1i("u_Texture", 0);
+    glm::mat4 proj = glm::ortho(-1.6f, 1.6f, -1.0f, 1.0f, -1.0f, 1.0f);
+    program.SetUniformMat4f("u_MVP", proj);
 
     Texture2D texture = Texture2D::ParseFile(texturePath);
 

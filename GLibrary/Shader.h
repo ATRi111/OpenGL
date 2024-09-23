@@ -1,5 +1,6 @@
 #pragma once
 #include"GLAD/include/glad/glad.h"
+#include"GLibrary/glm/glm.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -99,7 +100,7 @@ namespace GLibrary
             locaionCache.emplace(name, location);
             return location;
         }
-
+#pragma region Uniform
         void SetUniform1i(const char* name, int i) const
         {
             Bind();
@@ -114,10 +115,17 @@ namespace GLibrary
         }
         void SetUniform4f(const char* name, float f1, float f2, float f3, float f4) const
         {
-            Bind(); 
+            Bind();
             int location = GetUniformLocation(name);
             glUniform4f(location, f1, f2, f3, f4);
         }
+        void SetUniformMat4f(const char* name, const glm::mat4& matrix) const
+        {
+            Bind();
+            int location = GetUniformLocation(name);
+            glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+        }
+#pragma endregion
 
         unsigned int ID() const
         {
