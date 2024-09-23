@@ -1,5 +1,5 @@
 #pragma once
-#include "GLAD/include/glad/glad.h"
+#include"GLAD/include/glad/glad.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,7 +14,6 @@ namespace GLibrary
 	{
 		unsigned int id;
 	public:
-
 		Shader(std::string code, int type)
 		{
             id = glCreateShader(type);
@@ -48,7 +47,7 @@ namespace GLibrary
         std::vector<Shader> shaders;
         mutable std::unordered_map<std::string, int> locaionCache;
     public:
-        static ShaderProgram Parse(const std::string& filepath);
+        static ShaderProgram ParseFile(const std::string& filepath);
         ShaderProgram()
         {
             id = glCreateProgram();
@@ -101,6 +100,12 @@ namespace GLibrary
             return location;
         }
 
+        void SetUniform1i(const char* name, int i) const
+        {
+            Bind();
+            int location = GetUniformLocation(name);
+            glUniform1i(location, i);
+        }
         void SetUniform1f(const char* name, float f) const
         {
             Bind();
@@ -124,7 +129,7 @@ namespace GLibrary
         }
     };
 
-    ShaderProgram ShaderProgram::Parse(const std::string& filepath)
+    inline ShaderProgram ShaderProgram::ParseFile(const std::string& filepath)
     {
         std::string line;
         std::ifstream stream(filepath);

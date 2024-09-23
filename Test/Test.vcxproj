@@ -32,6 +32,9 @@
   <ItemGroup>
     <None Include="TestShader.shader" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Sakura Bi Kyo Sou.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

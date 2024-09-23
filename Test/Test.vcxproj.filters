@@ -16,6 +16,9 @@
     <Filter Include="资源文件\Shader">
       <UniqueIdentifier>{3356719b-d403-45e6-a779-31a5798e4f6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\Texture">
+      <UniqueIdentifier>{8c1a9247-10a2-453a-a003-802accf29668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -26,5 +29,10 @@
     <None Include="TestShader.shader">
       <Filter>资源文件\Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Sakura Bi Kyo Sou.png">
+      <Filter>资源文件\Texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

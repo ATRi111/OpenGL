@@ -42,7 +42,7 @@ namespace GLibrary
 			{
 				const VertexPropertyLayout& p = properties[i];
 				glEnableVertexAttribArray(p.index);
-				glVertexAttribPointer(p.index, p.count, p.type, p.normalized, layout.Stride(), (const void*)offset);
+				glVertexAttribPointer(p.index, p.count, p.type, p.normalized, layout.Stride(), reinterpret_cast<const void*>(offset));
 				offset += p.Size();
 			}
 		}
