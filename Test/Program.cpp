@@ -2,6 +2,7 @@
 #include"include/glfw3.h"
 #include"GLibrary/glm/glm.hpp"
 #include"GLibrary/glm/ext/matrix_clip_space.hpp"
+#include"GLibrary/glm/ext/matrix_transform.hpp"
 
 using namespace GLibrary;
 using namespace std;
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
     string solutionDir = argv[0];
     solutionDir = solutionDir.substr(0, solutionDir.find("\\OpenGL\\")) + "\\OpenGL\\OpenGL\\";
     string shaderPath = solutionDir + "Test\\TestShader.shader";
-    string texturePath = solutionDir + "Test\\Sakura Bi Kyo Sou.png";
+    string texturePath = solutionDir + "Test\\Haruhi Kyousou.png";
 
     GLFWwindow* window;
 
@@ -80,8 +81,13 @@ int main(int argc, char* argv[])
 
     program.SetUniform4f("u_Color", 1, 0, 1, 1);
     program.SetUniform1i("u_Texture", 0);
-    glm::mat4 proj = glm::ortho(-1.6f, 1.6f, -1.0f, 1.0f, -1.0f, 1.0f);
-    program.SetUniformMat4f("u_MVP", proj);
+    glm::mat4 Mproj = glm::ortho(-0.8f, 0.8f, -0.5f, 0.5f, -1.0f, 1.0f);
+    glm::mat4 Mview = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f, 0, 0));
+    glm::mat4 Mmodel = glm::mat4(1.0f);
+
+    program.SetUniformMat4f("u_Mproj", Mproj);
+    program.SetUniformMat4f("u_Mview", Mview);
+    program.SetUniformMat4f("u_Mmodel", Mmodel);
 
     Texture2D texture = Texture2D::ParseFile(texturePath);
 

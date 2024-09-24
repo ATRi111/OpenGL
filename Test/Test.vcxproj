@@ -33,7 +33,7 @@
     <None Include="TestShader.shader" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Sakura Bi Kyo Sou.png" />
+    <Image Include="Haruhi Kyousou.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

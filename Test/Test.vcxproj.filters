@@ -31,7 +31,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Sakura Bi Kyo Sou.png">
+    <Image Include="Haruhi Kyousou.png">
       <Filter>资源文件\Texture</Filter>
     </Image>
   </ItemGroup>
