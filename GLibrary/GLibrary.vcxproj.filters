@@ -942,10 +942,13 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="ImGui\imgui_impl_glfw.h">
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ImGui\imgui_impl_opengl3.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_opengl3_loader.h">
       <Filter>ImGui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -977,6 +980,9 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_glfw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_opengl3.cpp">

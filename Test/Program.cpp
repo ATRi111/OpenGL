@@ -1,8 +1,11 @@
 #include"GLibrary/GLibrary.h"
 #include"include/glfw3.h"
+#include"GLibrary/ImGui/imgui.h"
+#include"GLibrary/ImGui/imgui_impl_glfw.h"
 #include"GLibrary/glm/glm.hpp"
 #include"GLibrary/glm/ext/matrix_clip_space.hpp"
 #include"GLibrary/glm/ext/matrix_transform.hpp"
+#include"GLibrary/ImGui/imgui_impl_opengl3.h"
 
 using namespace GLibrary;
 using namespace std;
@@ -93,14 +96,32 @@ int main(int argc, char* argv[])
 
     Renderer renderer;
 
+    const char* glsl_version = "#version 130";
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui::StyleColorsDark();
+
     while (!glfwWindowShouldClose(window))
     {
         renderer.Clear();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         renderer.Draw(va, ib, program);
+        ImGui::Render();
+        ImGui::GetDrawData();
+        
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }

@@ -421,6 +421,7 @@
     <ClInclude Include="glm\vector_relational.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\imgui_impl_glfw.h" />
     <ClInclude Include="ImGui\imgui_impl_opengl3.h" />
     <ClInclude Include="ImGui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="ImGui\imgui_internal.h" />
@@ -447,6 +448,7 @@
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_glfw.cpp" />
     <ClCompile Include="ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
