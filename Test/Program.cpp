@@ -33,7 +33,17 @@ static void APIENTRY DebugCallback(
     const GLchar* message,
     const void* userParam) 
 {
-    std::cout << "GLDebug: " << message << std::endl;
+    switch (severity)
+    {
+    case GL_DEBUG_SEVERITY_NOTIFICATION:
+        break;
+    case GL_DEBUG_SEVERITY_LOW:
+    case GL_DEBUG_SEVERITY_MEDIUM:
+    case GL_DEBUG_SEVERITY_HIGH:
+        std::cout << "[Warning]" << severity << message << std::endl;
+    default:
+        break;
+    }
 }
 
 int main(int argc, char* argv[])
