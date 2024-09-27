@@ -24,6 +24,9 @@
     <ClCompile Include="Program.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DebugController.h">
+      <Filter>头文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestShader.shader">
@@ -34,5 +37,13 @@
     <Image Include="Haruhi Kyousou.png">
       <Filter>资源文件\Texture</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Initializer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

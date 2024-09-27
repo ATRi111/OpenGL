@@ -3,13 +3,12 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 uv;
 out vec2 v_uv;
-uniform mat4 u_Mmodel;
 uniform mat4 u_Mview;
 uniform mat4 u_Mproj;
 
 void main()
 {
-   gl_Position = u_Mmodel * u_Mview * u_Mproj * position;
+   gl_Position = u_Mview * u_Mproj * position;
    v_uv = uv;
 };
 

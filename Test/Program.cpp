@@ -1,21 +1,19 @@
-#include"GLibrary/GLibrary.h"
+#include"DebugController.h"
 #include"include/glfw3.h"
 #include"GLibrary/ImGui/imgui.h"
 #include"GLibrary/ImGui/imgui_impl_glfw.h"
-#include"GLibrary/glm/glm.hpp"
-#include"GLibrary/glm/ext/matrix_clip_space.hpp"
-#include"GLibrary/glm/ext/matrix_transform.hpp"
-#include"GLibrary/ImGui/imgui_impl_opengl3.h"
+#include"Camera.h"
+#include"Initializer.h"
 
 using namespace GLibrary;
 using namespace std;
 
 float vertices[] = 
 {
-    -0.8f,-0.5f,0,0,
-    0.8f,-0.5f,1,0,
-    0.8f,0.5f,1,1,
-    -0.8f,0.5f,0,1,
+    -0.8f,-0.5f,0.0f,0,0,
+    0.8f,-0.5f,0.0f,1,0,
+    0.8f,0.5f,0.0f,1,1,
+    -0.8f,0.5f,0.0f,0,1,
 };
 
 unsigned int indicies[] =
@@ -24,28 +22,6 @@ unsigned int indicies[] =
     2,3,0,
 };
 
-static void APIENTRY DebugCallback(
-    unsigned int source,
-    unsigned int type,
-    unsigned int id,
-    unsigned int severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam) 
-{
-    switch (severity)
-    {
-    case GL_DEBUG_SEVERITY_NOTIFICATION:
-        break;
-    case GL_DEBUG_SEVERITY_LOW:
-    case GL_DEBUG_SEVERITY_MEDIUM:
-    case GL_DEBUG_SEVERITY_HIGH:
-        std::cout << "[Warning]" << severity << message << std::endl;
-    default:
-        break;
-    }
-}
-
 int main(int argc, char* argv[])
 {
     string solutionDir = argv[0];
@@ -53,38 +29,19 @@ int main(int argc, char* argv[])
     string shaderPath = solutionDir + "Test\\TestShader.shader";
     string texturePath = solutionDir + "Test\\Haruhi Kyousou.png";
 
-    GLFWwindow* window;
+    GLFWwindow* window = Initializer::InitGLFW();
+    Initializer::InitImGui();
 
-    if (!glfwInit())
-        return -1;
+    DebugController debugController;
 
-    window = glfwCreateWindow(1920, 1080, "Window", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(DebugCallback, nullptr);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+    Initializer::EnableBlend();
 
     VertexArray va;
     VertexBuffer vb(vertices, sizeof(vertices), GL_STATIC_DRAW);
     IndexBuffer ib(indicies, sizeof(indicies), GL_STATIC_DRAW);
     
     VertexBufferLayout layout;
-    layout.AddProperty<float>(0, 2);
+    layout.AddProperty<float>(0, 3);
     layout.AddProperty<float>(1, 2);
     va.SetLayout(layout);
 
@@ -94,23 +51,19 @@ int main(int argc, char* argv[])
 
     program.SetUniform4f("u_Color", 1, 0, 1, 1);
     program.SetUniform1i("u_Texture", 0);
-    glm::mat4 Mproj = glm::ortho(-0.8f, 0.8f, -0.5f, 0.5f, -1.0f, 1.0f);
-    glm::mat4 Mview = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f, 0, 0));
-    glm::mat4 Mmodel = glm::mat4(1.0f);
 
-    program.SetUniformMat4f("u_Mproj", Mproj);
+    OrthographicCamera camera(1.6f, 1.0f);
+
+
+    glm::mat4 Mview = camera.ViewMatrix();
+    glm::mat4 Mproj = camera.ProjectionMatrix();
     program.SetUniformMat4f("u_Mview", Mview);
-    program.SetUniformMat4f("u_Mmodel", Mmodel);
+    program.SetUniformMat4f("u_Mproj", Mproj);
 
     Texture2D texture = Texture2D::ParseFile(texturePath);
 
     Renderer renderer;
-
-    const char* glsl_version = "#version 130";
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-    ImGui::StyleColorsDark();
+    
 
     ImGuiIO& io = ImGui::GetIO();
     bool show_demo_window = true;
@@ -172,9 +125,7 @@ int main(int argc, char* argv[])
         glfwPollEvents();
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    Initializer::ShutDownImGui();
     glfwTerminate();
     return 0;
 }
