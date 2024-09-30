@@ -17,7 +17,7 @@ protected:
 public:
 	Camera()
 	{
-		position = glm::vec3(0, 0, -1.0f);
+		position = glm::vec3(0, 0, -10.0f);
 		viewMatrix = glm::mat4(1);
 		projectionMatrix = glm::mat4(1);
 		viewportMatrix = glm::mat4(1);

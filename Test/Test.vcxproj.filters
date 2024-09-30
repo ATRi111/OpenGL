@@ -39,10 +39,16 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Initializer.h">
+    <ClInclude Include="GLFWController.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiController.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

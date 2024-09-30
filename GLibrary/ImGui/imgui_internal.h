@@ -161,7 +161,7 @@ struct ImGuiTableColumnsSettings;   // Storage for a column .ini settings
 struct ImGuiTreeNodeStackData;      // Temporary storage for TreeNode().
 struct ImGuiTypingSelectState;      // Storage for GetTypingSelectRequest()
 struct ImGuiTypingSelectRequest;    // Storage for GetTypingSelectRequest() (aimed to be public)
-struct ImGuiWindow;                 // Storage for one window
+struct ImGuiController;                 // Storage for one window
 struct ImGuiWindowTempData;         // Temporary storage for one window (that's the data which in theory we could ditch at the end of the frame, in practice we currently keep it for each window)
 struct ImGuiWindowSettings;         // Storage for a window .ini settings (we keep one of those even if the actual window wasn't instanced during this session)
 
@@ -1279,7 +1279,7 @@ struct IMGUI_API ImGuiStackSizes
 // Data saved for each window pushed into the stack
 struct ImGuiWindowStackData
 {
-    ImGuiWindow*        Window;
+    ImGuiController*        Window;
     ImGuiLastItemData   ParentLastItemDataBackup;
     ImGuiStackSizes     StackSizesOnBegin;          // Store size of various stacks for asserting
     bool                DisabledOverrideReenable;   // Non-child window override disabled flag
@@ -1316,8 +1316,8 @@ enum ImGuiPopupPositionPolicy
 struct ImGuiPopupData
 {
     ImGuiID             PopupId;        // Set on OpenPopup()
-    ImGuiWindow*        Window;         // Resolved on BeginPopup() - may stay unresolved if user never calls OpenPopup()
-    ImGuiWindow*        RestoreNavWindow;// Set on OpenPopup(), a NavWindow that will be restored on popup close
+    ImGuiController*        Window;         // Resolved on BeginPopup() - may stay unresolved if user never calls OpenPopup()
+    ImGuiController*        RestoreNavWindow;// Set on OpenPopup(), a NavWindow that will be restored on popup close
     int                 ParentNavLayer; // Resolved on BeginPopup(). Actually a ImGuiNavLayer type (declared down below), initialized to -1 which is not part of an enum, but serves well-enough as "not any of layers" value
     int                 OpenFrameCount; // Set on OpenPopup()
     ImGuiID             OpenParentId;   // Set on OpenPopup(), we need this to differentiate multiple menu sets from each others (e.g. inside menu bar vs loose menu items)
@@ -1590,7 +1590,7 @@ enum ImGuiNavLayer
 // Storage for navigation query/results
 struct ImGuiNavItemData
 {
-    ImGuiWindow*        Window;         // Init,Move    // Best candidate window (result->ItemWindow->RootWindowForNav == request->Window)
+    ImGuiController*        Window;         // Init,Move    // Best candidate window (result->ItemWindow->RootWindowForNav == request->Window)
     ImGuiID             ID;             // Init,Move    // Best candidate item ID
     ImGuiID             FocusScopeId;   // Init,Move    // Best candidate focus scope ID
     ImRect              RectRel;        // Init,Move    // Best candidate bounding box in window relative space
@@ -1721,7 +1721,7 @@ struct ImGuiBoxSelectState
     ImVec2                  StartPosRel;        // Start position in window-contents relative space (to support scrolling)
     ImVec2                  EndPosRel;          // End position in window-contents relative space
     ImVec2                  ScrollAccum;        // Scrolling accumulator (to behave at high-frame spaces)
-    ImGuiWindow*            Window;
+    ImGuiController*            Window;
 
     // Temporary/Transient data
     bool                    UnclipMode;         // (Temp/Transient, here in hot area). Set/cleared by the BeginMultiSelect()/EndMultiSelect() owning active box-select.
@@ -1767,7 +1767,7 @@ struct IMGUI_API ImGuiMultiSelectTempData
 // Persistent storage for multi-select (as long as selection is alive)
 struct IMGUI_API ImGuiMultiSelectState
 {
-    ImGuiWindow*            Window;
+    ImGuiController*            Window;
     ImGuiID                 ID;
     int                     LastFrameActive;    // Last used frame-count, for GC.
     int                     LastSelectionSize;  // Set by BeginMultiSelect() based on optional info provided by user. May be -1 if unknown.
@@ -2020,20 +2020,20 @@ struct ImGuiContext
     ImU32                   InputEventsNextEventId;
 
     // Windows state
-    ImVector<ImGuiWindow*>  Windows;                            // Windows, sorted in display order, back to front
-    ImVector<ImGuiWindow*>  WindowsFocusOrder;                  // Root windows, sorted in focus order, back to front.
-    ImVector<ImGuiWindow*>  WindowsTempSortBuffer;              // Temporary buffer used in EndFrame() to reorder windows so parents are kept before their child
+    ImVector<ImGuiController*>  Windows;                            // Windows, sorted in display order, back to front
+    ImVector<ImGuiController*>  WindowsFocusOrder;                  // Root windows, sorted in focus order, back to front.
+    ImVector<ImGuiController*>  WindowsTempSortBuffer;              // Temporary buffer used in EndFrame() to reorder windows so parents are kept before their child
     ImVector<ImGuiWindowStackData> CurrentWindowStack;
     ImGuiStorage            WindowsById;                        // Map window's ImGuiID to ImGuiWindow*
     int                     WindowsActiveCount;                 // Number of unique windows submitted by frame
     ImVec2                  WindowsHoverPadding;                // Padding around resizable windows for which hovering on counts as hovering the window == ImMax(style.TouchExtraPadding, WINDOWS_HOVER_PADDING).
     ImGuiID                 DebugBreakInWindow;                 // Set to break in Begin() call.
-    ImGuiWindow*            CurrentWindow;                      // Window being drawn into
-    ImGuiWindow*            HoveredWindow;                      // Window the mouse is hovering. Will typically catch mouse inputs.
-    ImGuiWindow*            HoveredWindowUnderMovingWindow;     // Hovered window ignoring MovingWindow. Only set if MovingWindow is set.
-    ImGuiWindow*            HoveredWindowBeforeClear;           // Window the mouse is hovering. Filled even with _NoMouse. This is currently useful for multi-context compositors.
-    ImGuiWindow*            MovingWindow;                       // Track the window we clicked on (in order to preserve focus). The actual window that is moved is generally MovingWindow->RootWindow.
-    ImGuiWindow*            WheelingWindow;                     // Track the window we started mouse-wheeling on. Until a timer elapse or mouse has moved, generally keep scrolling the same window even if during the course of scrolling the mouse ends up hovering a child window.
+    ImGuiController*            CurrentWindow;                      // Window being drawn into
+    ImGuiController*            HoveredWindow;                      // Window the mouse is hovering. Will typically catch mouse inputs.
+    ImGuiController*            HoveredWindowUnderMovingWindow;     // Hovered window ignoring MovingWindow. Only set if MovingWindow is set.
+    ImGuiController*            HoveredWindowBeforeClear;           // Window the mouse is hovering. Filled even with _NoMouse. This is currently useful for multi-context compositors.
+    ImGuiController*            MovingWindow;                       // Track the window we clicked on (in order to preserve focus). The actual window that is moved is generally MovingWindow->RootWindow.
+    ImGuiController*            WheelingWindow;                     // Track the window we started mouse-wheeling on. Until a timer elapse or mouse has moved, generally keep scrolling the same window even if during the course of scrolling the mouse ends up hovering a child window.
     ImVec2                  WheelingWindowRefMousePos;
     int                     WheelingWindowStartFrame;           // This may be set one frame before WheelingWindow is != NULL
     int                     WheelingWindowScrolledFrame;
@@ -2064,12 +2064,12 @@ struct ImGuiContext
     bool                    ActiveIdFromShortcut;
     int                     ActiveIdMouseButton : 8;
     ImVec2                  ActiveIdClickOffset;                // Clicked offset from upper-left corner, if applicable (currently only set by ButtonBehavior)
-    ImGuiWindow*            ActiveIdWindow;
+    ImGuiController*            ActiveIdWindow;
     ImGuiInputSource        ActiveIdSource;                     // Activating source: ImGuiInputSource_Mouse OR ImGuiInputSource_Keyboard OR ImGuiInputSource_Gamepad
     ImGuiID                 ActiveIdPreviousFrame;
     bool                    ActiveIdPreviousFrameIsAlive;
     bool                    ActiveIdPreviousFrameHasBeenEditedBefore;
-    ImGuiWindow*            ActiveIdPreviousFrameWindow;
+    ImGuiController*            ActiveIdPreviousFrameWindow;
     ImGuiID                 LastActiveId;                       // Store the last non-zero ActiveId, useful for animation.
     float                   LastActiveIdTimer;                  // Store the last non-zero ActiveId timer since the beginning of activation, useful for animation.
 
@@ -2113,7 +2113,7 @@ struct ImGuiContext
     ImVector<ImGuiViewportP*> Viewports;                        // Active viewports (Size==1 in 'master' branch). Each viewports hold their copy of ImDrawData.
 
     // Gamepad/keyboard Navigation
-    ImGuiWindow*            NavWindow;                          // Focused window for navigation. Could be called 'FocusedWindow'
+    ImGuiController*            NavWindow;                          // Focused window for navigation. Could be called 'FocusedWindow'
     ImGuiID                 NavId;                              // Focused item for navigation
     ImGuiID                 NavFocusScopeId;                    // Focused focus scope (e.g. selection code often wants to "clear other items" when landing on an item of the same scope)
     ImGuiNavLayer           NavLayer;                           // Focused layer (main scrolling layer, or menu/title bar layer)
@@ -2168,9 +2168,9 @@ struct ImGuiContext
     // Navigation: Windowing (CTRL+TAB for list, or Menu button + keys or directional pads to move/resize)
     ImGuiKeyChord           ConfigNavWindowingKeyNext;          // = ImGuiMod_Ctrl | ImGuiKey_Tab (or ImGuiMod_Super | ImGuiKey_Tab on OS X). For reconfiguration (see #4828)
     ImGuiKeyChord           ConfigNavWindowingKeyPrev;          // = ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab (or ImGuiMod_Super | ImGuiMod_Shift | ImGuiKey_Tab on OS X)
-    ImGuiWindow*            NavWindowingTarget;                 // Target window when doing CTRL+Tab (or Pad Menu + FocusPrev/Next), this window is temporarily displayed top-most!
-    ImGuiWindow*            NavWindowingTargetAnim;             // Record of last valid NavWindowingTarget until DimBgRatio and NavWindowingHighlightAlpha becomes 0.0f, so the fade-out can stay on it.
-    ImGuiWindow*            NavWindowingListWindow;             // Internal window actually listing the CTRL+Tab contents
+    ImGuiController*            NavWindowingTarget;                 // Target window when doing CTRL+Tab (or Pad Menu + FocusPrev/Next), this window is temporarily displayed top-most!
+    ImGuiController*            NavWindowingTargetAnim;             // Record of last valid NavWindowingTarget until DimBgRatio and NavWindowingHighlightAlpha becomes 0.0f, so the fade-out can stay on it.
+    ImGuiController*            NavWindowingListWindow;             // Internal window actually listing the CTRL+Tab contents
     float                   NavWindowingTimer;
     float                   NavWindowingHighlightAlpha;
     bool                    NavWindowingToggleLayer;
@@ -2581,7 +2581,7 @@ struct IMGUI_API ImGuiWindowTempData
     ImGuiMenuColumns        MenuColumns;            // Simplified columns storage for menu items measurement
     int                     TreeDepth;              // Current tree depth.
     ImU32                   TreeHasStackDataDepthMask; // Store whether given depth has ImGuiTreeNodeStackData data. Could be turned into a ImU64 if necessary.
-    ImVector<ImGuiWindow*>  ChildWindows;
+    ImVector<ImGuiController*>  ChildWindows;
     ImGuiStorage*           StateStorage;           // Current persistent per-window storage (store e.g. tree node open/close state)
     ImGuiOldColumns*        CurrentColumns;         // Current columns set
     int                     CurrentTableIdx;        // Current table index (into g.Tables)
@@ -2598,7 +2598,7 @@ struct IMGUI_API ImGuiWindowTempData
 };
 
 // Storage for one window
-struct IMGUI_API ImGuiWindow
+struct IMGUI_API ImGuiController
 {
     ImGuiContext*           Ctx;                                // Parent UI context (needs to be set explicitly by parent).
     char*                   Name;                               // Window name, owned by the window.
@@ -2687,15 +2687,15 @@ struct IMGUI_API ImGuiWindow
 
     ImDrawList*             DrawList;                           // == &DrawListInst (for backward compatibility reason with code using imgui_internal.h we keep this a pointer)
     ImDrawList              DrawListInst;
-    ImGuiWindow*            ParentWindow;                       // If we are a child _or_ popup _or_ docked window, this is pointing to our parent. Otherwise NULL.
-    ImGuiWindow*            ParentWindowInBeginStack;
-    ImGuiWindow*            RootWindow;                         // Point to ourself or first ancestor that is not a child window. Doesn't cross through popups/dock nodes.
-    ImGuiWindow*            RootWindowPopupTree;                // Point to ourself or first ancestor that is not a child window. Cross through popups parent<>child.
-    ImGuiWindow*            RootWindowForTitleBarHighlight;     // Point to ourself or first ancestor which will display TitleBgActive color when this window is active.
-    ImGuiWindow*            RootWindowForNav;                   // Point to ourself or first ancestor which doesn't have the NavFlattened flag.
-    ImGuiWindow*            ParentWindowForFocusRoute;          // Set to manual link a window to its logical parent so that Shortcut() chain are honoerd (e.g. Tool linked to Document)
+    ImGuiController*            ParentWindow;                       // If we are a child _or_ popup _or_ docked window, this is pointing to our parent. Otherwise NULL.
+    ImGuiController*            ParentWindowInBeginStack;
+    ImGuiController*            RootWindow;                         // Point to ourself or first ancestor that is not a child window. Doesn't cross through popups/dock nodes.
+    ImGuiController*            RootWindowPopupTree;                // Point to ourself or first ancestor that is not a child window. Cross through popups parent<>child.
+    ImGuiController*            RootWindowForTitleBarHighlight;     // Point to ourself or first ancestor which will display TitleBgActive color when this window is active.
+    ImGuiController*            RootWindowForNav;                   // Point to ourself or first ancestor which doesn't have the NavFlattened flag.
+    ImGuiController*            ParentWindowForFocusRoute;          // Set to manual link a window to its logical parent so that Shortcut() chain are honoerd (e.g. Tool linked to Document)
 
-    ImGuiWindow*            NavLastChildNavWindow;              // When going to the menu bar, we remember the child window we came from. (This could probably be made implicit if we kept g.Windows sorted by last focused including child window.)
+    ImGuiController*            NavLastChildNavWindow;              // When going to the menu bar, we remember the child window we came from. (This could probably be made implicit if we kept g.Windows sorted by last focused including child window.)
     ImGuiID                 NavLastIds[ImGuiNavLayer_COUNT];    // Last known NavId for this window, per layer (0/1)
     ImRect                  NavRectRel[ImGuiNavLayer_COUNT];    // Reference rectangle, in window relative space
     ImVec2                  NavPreferredScoringPosRel[ImGuiNavLayer_COUNT]; // Preferred X/Y position updated when moving on a given axis, reset to FLT_MAX.
@@ -2706,8 +2706,8 @@ struct IMGUI_API ImGuiWindow
     bool                    MemoryCompacted;                    // Set when window extraneous data have been garbage collected
 
 public:
-    ImGuiWindow(ImGuiContext* context, const char* name);
-    ~ImGuiWindow();
+    ImGuiController(ImGuiContext* context, const char* name);
+    ~ImGuiController();
 
     ImGuiID     GetID(const char* str, const char* str_end = NULL);
     ImGuiID     GetID(const void* ptr);
@@ -2966,8 +2966,8 @@ struct IMGUI_API ImGuiTable
     ImRect                      Bg2ClipRectForDrawCmd;      // Actual ImDrawCmd clip rect for BG2 channel. This tends to be a correct, tight-fit, because output to BG2 are done by widgets relying on regular ClipRect.
     ImRect                      HostClipRect;               // This is used to check if we can eventually merge our columns draw calls into the current draw call of the current window.
     ImRect                      HostBackupInnerClipRect;    // Backup of InnerWindow->ClipRect during PushTableBackground()/PopTableBackground()
-    ImGuiWindow*                OuterWindow;                // Parent window for the table
-    ImGuiWindow*                InnerWindow;                // Window holding the table data (== OuterWindow or a child window)
+    ImGuiController*                OuterWindow;                // Parent window for the table
+    ImGuiController*                InnerWindow;                // Window holding the table data (== OuterWindow or a child window)
     ImGuiTextBuffer             ColumnsNames;               // Contiguous buffer holding columns names
     ImDrawListSplitter*         DrawSplitter;               // Shortcut to TempData->DrawSplitter while in table. Isolate draw commands per columns to avoid switching clip rect constantly
     ImGuiTableInstanceData      InstanceDataFirst;
@@ -3104,37 +3104,37 @@ namespace ImGui
     // If this ever crashes because g.CurrentWindow is NULL, it means that either:
     // - ImGui::NewFrame() has never been called, which is illegal.
     // - You are calling ImGui functions after ImGui::EndFrame()/ImGui::Render() and before the next ImGui::NewFrame(), which is also illegal.
-    inline    ImGuiWindow*  GetCurrentWindowRead()      { ImGuiContext& g = *GImGui; return g.CurrentWindow; }
-    inline    ImGuiWindow*  GetCurrentWindow()          { ImGuiContext& g = *GImGui; g.CurrentWindow->WriteAccessed = true; return g.CurrentWindow; }
-    IMGUI_API ImGuiWindow*  FindWindowByID(ImGuiID id);
-    IMGUI_API ImGuiWindow*  FindWindowByName(const char* name);
-    IMGUI_API void          UpdateWindowParentAndRootLinks(ImGuiWindow* window, ImGuiWindowFlags flags, ImGuiWindow* parent_window);
-    IMGUI_API void          UpdateWindowSkipRefresh(ImGuiWindow* window);
-    IMGUI_API ImVec2        CalcWindowNextAutoFitSize(ImGuiWindow* window);
-    IMGUI_API bool          IsWindowChildOf(ImGuiWindow* window, ImGuiWindow* potential_parent, bool popup_hierarchy);
-    IMGUI_API bool          IsWindowWithinBeginStackOf(ImGuiWindow* window, ImGuiWindow* potential_parent);
-    IMGUI_API bool          IsWindowAbove(ImGuiWindow* potential_above, ImGuiWindow* potential_below);
-    IMGUI_API bool          IsWindowNavFocusable(ImGuiWindow* window);
-    IMGUI_API void          SetWindowPos(ImGuiWindow* window, const ImVec2& pos, ImGuiCond cond = 0);
-    IMGUI_API void          SetWindowSize(ImGuiWindow* window, const ImVec2& size, ImGuiCond cond = 0);
-    IMGUI_API void          SetWindowCollapsed(ImGuiWindow* window, bool collapsed, ImGuiCond cond = 0);
-    IMGUI_API void          SetWindowHitTestHole(ImGuiWindow* window, const ImVec2& pos, const ImVec2& size);
-    IMGUI_API void          SetWindowHiddenAndSkipItemsForCurrentFrame(ImGuiWindow* window);
-    inline void             SetWindowParentWindowForFocusRoute(ImGuiWindow* window, ImGuiWindow* parent_window) { window->ParentWindowForFocusRoute = parent_window; }
-    inline ImRect           WindowRectAbsToRel(ImGuiWindow* window, const ImRect& r) { ImVec2 off = window->DC.CursorStartPos; return ImRect(r.Min.x - off.x, r.Min.y - off.y, r.Max.x - off.x, r.Max.y - off.y); }
-    inline ImRect           WindowRectRelToAbs(ImGuiWindow* window, const ImRect& r) { ImVec2 off = window->DC.CursorStartPos; return ImRect(r.Min.x + off.x, r.Min.y + off.y, r.Max.x + off.x, r.Max.y + off.y); }
-    inline ImVec2           WindowPosAbsToRel(ImGuiWindow* window, const ImVec2& p)  { ImVec2 off = window->DC.CursorStartPos; return ImVec2(p.x - off.x, p.y - off.y); }
-    inline ImVec2           WindowPosRelToAbs(ImGuiWindow* window, const ImVec2& p)  { ImVec2 off = window->DC.CursorStartPos; return ImVec2(p.x + off.x, p.y + off.y); }
+    inline    ImGuiController*  GetCurrentWindowRead()      { ImGuiContext& g = *GImGui; return g.CurrentWindow; }
+    inline    ImGuiController*  GetCurrentWindow()          { ImGuiContext& g = *GImGui; g.CurrentWindow->WriteAccessed = true; return g.CurrentWindow; }
+    IMGUI_API ImGuiController*  FindWindowByID(ImGuiID id);
+    IMGUI_API ImGuiController*  FindWindowByName(const char* name);
+    IMGUI_API void          UpdateWindowParentAndRootLinks(ImGuiController* window, ImGuiWindowFlags flags, ImGuiController* parent_window);
+    IMGUI_API void          UpdateWindowSkipRefresh(ImGuiController* window);
+    IMGUI_API ImVec2        CalcWindowNextAutoFitSize(ImGuiController* window);
+    IMGUI_API bool          IsWindowChildOf(ImGuiController* window, ImGuiController* potential_parent, bool popup_hierarchy);
+    IMGUI_API bool          IsWindowWithinBeginStackOf(ImGuiController* window, ImGuiController* potential_parent);
+    IMGUI_API bool          IsWindowAbove(ImGuiController* potential_above, ImGuiController* potential_below);
+    IMGUI_API bool          IsWindowNavFocusable(ImGuiController* window);
+    IMGUI_API void          SetWindowPos(ImGuiController* window, const ImVec2& pos, ImGuiCond cond = 0);
+    IMGUI_API void          SetWindowSize(ImGuiController* window, const ImVec2& size, ImGuiCond cond = 0);
+    IMGUI_API void          SetWindowCollapsed(ImGuiController* window, bool collapsed, ImGuiCond cond = 0);
+    IMGUI_API void          SetWindowHitTestHole(ImGuiController* window, const ImVec2& pos, const ImVec2& size);
+    IMGUI_API void          SetWindowHiddenAndSkipItemsForCurrentFrame(ImGuiController* window);
+    inline void             SetWindowParentWindowForFocusRoute(ImGuiController* window, ImGuiController* parent_window) { window->ParentWindowForFocusRoute = parent_window; }
+    inline ImRect           WindowRectAbsToRel(ImGuiController* window, const ImRect& r) { ImVec2 off = window->DC.CursorStartPos; return ImRect(r.Min.x - off.x, r.Min.y - off.y, r.Max.x - off.x, r.Max.y - off.y); }
+    inline ImRect           WindowRectRelToAbs(ImGuiController* window, const ImRect& r) { ImVec2 off = window->DC.CursorStartPos; return ImRect(r.Min.x + off.x, r.Min.y + off.y, r.Max.x + off.x, r.Max.y + off.y); }
+    inline ImVec2           WindowPosAbsToRel(ImGuiController* window, const ImVec2& p)  { ImVec2 off = window->DC.CursorStartPos; return ImVec2(p.x - off.x, p.y - off.y); }
+    inline ImVec2           WindowPosRelToAbs(ImGuiController* window, const ImVec2& p)  { ImVec2 off = window->DC.CursorStartPos; return ImVec2(p.x + off.x, p.y + off.y); }
 
     // Windows: Display Order and Focus Order
-    IMGUI_API void          FocusWindow(ImGuiWindow* window, ImGuiFocusRequestFlags flags = 0);
-    IMGUI_API void          FocusTopMostWindowUnderOne(ImGuiWindow* under_this_window, ImGuiWindow* ignore_window, ImGuiViewport* filter_viewport, ImGuiFocusRequestFlags flags);
-    IMGUI_API void          BringWindowToFocusFront(ImGuiWindow* window);
-    IMGUI_API void          BringWindowToDisplayFront(ImGuiWindow* window);
-    IMGUI_API void          BringWindowToDisplayBack(ImGuiWindow* window);
-    IMGUI_API void          BringWindowToDisplayBehind(ImGuiWindow* window, ImGuiWindow* above_window);
-    IMGUI_API int           FindWindowDisplayIndex(ImGuiWindow* window);
-    IMGUI_API ImGuiWindow*  FindBottomMostVisibleWindowWithinBeginStack(ImGuiWindow* window);
+    IMGUI_API void          FocusWindow(ImGuiController* window, ImGuiFocusRequestFlags flags = 0);
+    IMGUI_API void          FocusTopMostWindowUnderOne(ImGuiController* under_this_window, ImGuiController* ignore_window, ImGuiViewport* filter_viewport, ImGuiFocusRequestFlags flags);
+    IMGUI_API void          BringWindowToFocusFront(ImGuiController* window);
+    IMGUI_API void          BringWindowToDisplayFront(ImGuiController* window);
+    IMGUI_API void          BringWindowToDisplayBack(ImGuiController* window);
+    IMGUI_API void          BringWindowToDisplayBehind(ImGuiController* window, ImGuiController* above_window);
+    IMGUI_API int           FindWindowDisplayIndex(ImGuiController* window);
+    IMGUI_API ImGuiController*  FindBottomMostVisibleWindowWithinBeginStack(ImGuiController* window);
 
     // Windows: Idle, Refresh Policies [EXPERIMENTAL]
     IMGUI_API void          SetNextWindowRefreshPolicy(ImGuiWindowRefreshFlags flags);
@@ -3142,7 +3142,7 @@ namespace ImGui
     // Fonts, drawing
     IMGUI_API void          SetCurrentFont(ImFont* font);
     inline ImFont*          GetDefaultFont() { ImGuiContext& g = *GImGui; return g.IO.FontDefault ? g.IO.FontDefault : g.IO.Fonts->Fonts[0]; }
-    inline ImDrawList*      GetForegroundDrawList(ImGuiWindow* window) { IM_UNUSED(window); return GetForegroundDrawList(); } // This seemingly unnecessary wrapper simplifies compatibility between the 'master' and 'docking' branches.
+    inline ImDrawList*      GetForegroundDrawList(ImGuiController* window) { IM_UNUSED(window); return GetForegroundDrawList(); } // This seemingly unnecessary wrapper simplifies compatibility between the 'master' and 'docking' branches.
     IMGUI_API ImDrawList*   GetBackgroundDrawList(ImGuiViewport* viewport);                     // get background draw list for the given viewport. this draw list will be the first rendering one. Useful to quickly draw shapes/text behind dear imgui contents.
     IMGUI_API ImDrawList*   GetForegroundDrawList(ImGuiViewport* viewport);                     // get foreground draw list for the given viewport. this draw list will be the last rendered one. Useful to quickly draw shapes/text over dear imgui contents.
     IMGUI_API void          AddDrawListToDrawDataEx(ImDrawData* draw_data, ImVector<ImDrawList*>* out_list, ImDrawList* draw_list);
@@ -3154,8 +3154,8 @@ namespace ImGui
     // NewFrame
     IMGUI_API void          UpdateInputEvents(bool trickle_fast_inputs);
     IMGUI_API void          UpdateHoveredWindowAndCaptureFlags();
-    IMGUI_API void          FindHoveredWindowEx(const ImVec2& pos, bool find_first_and_in_any_viewport, ImGuiWindow** out_hovered_window, ImGuiWindow** out_hovered_window_under_moving_window);
-    IMGUI_API void          StartMouseMovingWindow(ImGuiWindow* window);
+    IMGUI_API void          FindHoveredWindowEx(const ImVec2& pos, bool find_first_and_in_any_viewport, ImGuiController** out_hovered_window, ImGuiController** out_hovered_window_under_moving_window);
+    IMGUI_API void          StartMouseMovingWindow(ImGuiController* window);
     IMGUI_API void          UpdateMouseMovingWindowNewFrame();
     IMGUI_API void          UpdateMouseMovingWindowEndFrame();
 
@@ -3165,11 +3165,11 @@ namespace ImGui
     IMGUI_API void          CallContextHooks(ImGuiContext* context, ImGuiContextHookType type);
 
     // Viewports
-    IMGUI_API void          SetWindowViewport(ImGuiWindow* window, ImGuiViewportP* viewport);
+    IMGUI_API void          SetWindowViewport(ImGuiController* window, ImGuiViewportP* viewport);
 
     // Settings
     IMGUI_API void                  MarkIniSettingsDirty();
-    IMGUI_API void                  MarkIniSettingsDirty(ImGuiWindow* window);
+    IMGUI_API void                  MarkIniSettingsDirty(ImGuiController* window);
     IMGUI_API void                  ClearIniSettings();
     IMGUI_API void                  AddSettingsHandler(const ImGuiSettingsHandler* handler);
     IMGUI_API void                  RemoveSettingsHandler(const char* type_name);
@@ -3178,7 +3178,7 @@ namespace ImGui
     // Settings - Windows
     IMGUI_API ImGuiWindowSettings*  CreateNewWindowSettings(const char* name);
     IMGUI_API ImGuiWindowSettings*  FindWindowSettingsByID(ImGuiID id);
-    IMGUI_API ImGuiWindowSettings*  FindWindowSettingsByWindow(ImGuiWindow* window);
+    IMGUI_API ImGuiWindowSettings*  FindWindowSettingsByWindow(ImGuiController* window);
     IMGUI_API void                  ClearWindowSettings(const char* name);
 
     // Localization
@@ -3186,17 +3186,17 @@ namespace ImGui
     inline const char*      LocalizeGetMsg(ImGuiLocKey key) { ImGuiContext& g = *GImGui; const char* msg = g.LocalizationTable[key]; return msg ? msg : "*Missing Text*"; }
 
     // Scrolling
-    IMGUI_API void          SetScrollX(ImGuiWindow* window, float scroll_x);
-    IMGUI_API void          SetScrollY(ImGuiWindow* window, float scroll_y);
-    IMGUI_API void          SetScrollFromPosX(ImGuiWindow* window, float local_x, float center_x_ratio);
-    IMGUI_API void          SetScrollFromPosY(ImGuiWindow* window, float local_y, float center_y_ratio);
+    IMGUI_API void          SetScrollX(ImGuiController* window, float scroll_x);
+    IMGUI_API void          SetScrollY(ImGuiController* window, float scroll_y);
+    IMGUI_API void          SetScrollFromPosX(ImGuiController* window, float local_x, float center_x_ratio);
+    IMGUI_API void          SetScrollFromPosY(ImGuiController* window, float local_y, float center_y_ratio);
 
     // Early work-in-progress API (ScrollToItem() will become public)
     IMGUI_API void          ScrollToItem(ImGuiScrollFlags flags = 0);
-    IMGUI_API void          ScrollToRect(ImGuiWindow* window, const ImRect& rect, ImGuiScrollFlags flags = 0);
-    IMGUI_API ImVec2        ScrollToRectEx(ImGuiWindow* window, const ImRect& rect, ImGuiScrollFlags flags = 0);
+    IMGUI_API void          ScrollToRect(ImGuiController* window, const ImRect& rect, ImGuiScrollFlags flags = 0);
+    IMGUI_API ImVec2        ScrollToRectEx(ImGuiController* window, const ImRect& rect, ImGuiScrollFlags flags = 0);
 //#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-    inline void             ScrollToBringRectIntoView(ImGuiWindow* window, const ImRect& rect) { ScrollToRect(window, rect, ImGuiScrollFlags_KeepVisibleEdgeY); }
+    inline void             ScrollToBringRectIntoView(ImGuiController* window, const ImRect& rect) { ScrollToRect(window, rect, ImGuiScrollFlags_KeepVisibleEdgeY); }
 //#endif
 
     // Basic Accessors
@@ -3204,8 +3204,8 @@ namespace ImGui
     inline ImGuiItemFlags   GetItemFlags()  { ImGuiContext& g = *GImGui; return g.LastItemData.InFlags; }
     inline ImGuiID          GetActiveID()   { ImGuiContext& g = *GImGui; return g.ActiveId; }
     inline ImGuiID          GetFocusID()    { ImGuiContext& g = *GImGui; return g.NavId; }
-    IMGUI_API void          SetActiveID(ImGuiID id, ImGuiWindow* window);
-    IMGUI_API void          SetFocusID(ImGuiID id, ImGuiWindow* window);
+    IMGUI_API void          SetActiveID(ImGuiID id, ImGuiController* window);
+    IMGUI_API void          SetFocusID(ImGuiID id, ImGuiController* window);
     IMGUI_API void          ClearActiveID();
     IMGUI_API ImGuiID       GetHoveredID();
     IMGUI_API void          SetHoveredID(ImGuiID id);
@@ -3220,7 +3220,7 @@ namespace ImGui
     inline void             ItemSize(const ImRect& bb, float text_baseline_y = -1.0f) { ItemSize(bb.GetSize(), text_baseline_y); } // FIXME: This is a misleading API since we expect CursorPos to be bb.Min.
     IMGUI_API bool          ItemAdd(const ImRect& bb, ImGuiID id, const ImRect* nav_bb = NULL, ImGuiItemFlags extra_flags = 0);
     IMGUI_API bool          ItemHoverable(const ImRect& bb, ImGuiID id, ImGuiItemFlags item_flags);
-    IMGUI_API bool          IsWindowContentHoverable(ImGuiWindow* window, ImGuiHoveredFlags flags = 0);
+    IMGUI_API bool          IsWindowContentHoverable(ImGuiController* window, ImGuiHoveredFlags flags = 0);
     IMGUI_API bool          IsClippedEx(const ImRect& bb, ImGuiID id);
     IMGUI_API void          SetLastItemData(ImGuiID item_id, ImGuiItemFlags in_flags, ImGuiItemStatusFlags status_flags, const ImRect& item_rect);
     IMGUI_API ImVec2        CalcItemSize(ImVec2 size, float default_w, float default_h);
@@ -3246,14 +3246,14 @@ namespace ImGui
     IMGUI_API bool          BeginPopupEx(ImGuiID id, ImGuiWindowFlags extra_window_flags);
     IMGUI_API void          OpenPopupEx(ImGuiID id, ImGuiPopupFlags popup_flags = ImGuiPopupFlags_None);
     IMGUI_API void          ClosePopupToLevel(int remaining, bool restore_focus_to_window_under_popup);
-    IMGUI_API void          ClosePopupsOverWindow(ImGuiWindow* ref_window, bool restore_focus_to_window_under_popup);
+    IMGUI_API void          ClosePopupsOverWindow(ImGuiController* ref_window, bool restore_focus_to_window_under_popup);
     IMGUI_API void          ClosePopupsExceptModals();
     IMGUI_API bool          IsPopupOpen(ImGuiID id, ImGuiPopupFlags popup_flags);
-    IMGUI_API ImRect        GetPopupAllowedExtentRect(ImGuiWindow* window);
-    IMGUI_API ImGuiWindow*  GetTopMostPopupModal();
-    IMGUI_API ImGuiWindow*  GetTopMostAndVisiblePopupModal();
-    IMGUI_API ImGuiWindow*  FindBlockingModal(ImGuiWindow* window);
-    IMGUI_API ImVec2        FindBestWindowPosForPopup(ImGuiWindow* window);
+    IMGUI_API ImRect        GetPopupAllowedExtentRect(ImGuiController* window);
+    IMGUI_API ImGuiController*  GetTopMostPopupModal();
+    IMGUI_API ImGuiController*  GetTopMostAndVisiblePopupModal();
+    IMGUI_API ImGuiController*  FindBlockingModal(ImGuiController* window);
+    IMGUI_API ImVec2        FindBestWindowPosForPopup(ImGuiController* window);
     IMGUI_API ImVec2        FindBestWindowPosForPopupEx(const ImVec2& ref_pos, const ImVec2& size, ImGuiDir* last_dir, const ImRect& r_outer, const ImRect& r_avoid, ImGuiPopupPositionPolicy policy);
 
     // Tooltips
@@ -3271,7 +3271,7 @@ namespace ImGui
     IMGUI_API void          EndComboPreview();
 
     // Gamepad/Keyboard Navigation
-    IMGUI_API void          NavInitWindow(ImGuiWindow* window, bool force_reinit);
+    IMGUI_API void          NavInitWindow(ImGuiController* window, bool force_reinit);
     IMGUI_API void          NavInitRequestApplyResult();
     IMGUI_API bool          NavMoveRequestButNoResultYet();
     IMGUI_API void          NavMoveRequestSubmit(ImGuiDir move_dir, ImGuiDir clip_dir, ImGuiNavMoveFlags move_flags, ImGuiScrollFlags scroll_flags);
@@ -3280,12 +3280,12 @@ namespace ImGui
     IMGUI_API void          NavMoveRequestResolveWithPastTreeNode(ImGuiNavItemData* result, ImGuiTreeNodeStackData* tree_node_data);
     IMGUI_API void          NavMoveRequestCancel();
     IMGUI_API void          NavMoveRequestApplyResult();
-    IMGUI_API void          NavMoveRequestTryWrapping(ImGuiWindow* window, ImGuiNavMoveFlags move_flags);
+    IMGUI_API void          NavMoveRequestTryWrapping(ImGuiController* window, ImGuiNavMoveFlags move_flags);
     IMGUI_API void          NavHighlightActivated(ImGuiID id);
     IMGUI_API void          NavClearPreferredPosForAxis(ImGuiAxis axis);
     IMGUI_API void          NavRestoreHighlightAfterMove();
     IMGUI_API void          NavUpdateCurrentWindowIsScrollPushableX();
-    IMGUI_API void          SetNavWindow(ImGuiWindow* window);
+    IMGUI_API void          SetNavWindow(ImGuiController* window);
     IMGUI_API void          SetNavID(ImGuiID id, ImGuiNavLayer nav_layer, ImGuiID focus_scope_id, const ImRect& rect_rel);
     IMGUI_API void          SetNavFocusScope(ImGuiID focus_scope_id);
 
@@ -3406,7 +3406,7 @@ namespace ImGui
     IMGUI_API int           TypingSelectFindBestLeadingMatch(ImGuiTypingSelectRequest* req, int items_count, const char* (*get_item_name_func)(void*, int), void* user_data);
 
     // Box-Select API
-    IMGUI_API bool          BeginBoxSelect(const ImRect& scope_rect, ImGuiWindow* window, ImGuiID box_select_id, ImGuiMultiSelectFlags ms_flags);
+    IMGUI_API bool          BeginBoxSelect(const ImRect& scope_rect, ImGuiController* window, ImGuiID box_select_id, ImGuiMultiSelectFlags ms_flags);
     IMGUI_API void          EndBoxSelect(const ImRect& scope_rect, ImGuiMultiSelectFlags ms_flags);
 
     // Multi-Select API
@@ -3418,14 +3418,14 @@ namespace ImGui
     inline ImGuiMultiSelectState*   GetMultiSelectState(ImGuiID id) { ImGuiContext& g = *GImGui; return g.MultiSelectStorage.GetByKey(id); }
 
     // Internal Columns API (this is not exposed because we will encourage transitioning to the Tables API)
-    IMGUI_API void          SetWindowClipRectBeforeSetChannel(ImGuiWindow* window, const ImRect& clip_rect);
+    IMGUI_API void          SetWindowClipRectBeforeSetChannel(ImGuiController* window, const ImRect& clip_rect);
     IMGUI_API void          BeginColumns(const char* str_id, int count, ImGuiOldColumnFlags flags = 0); // setup number of columns. use an identifier to distinguish multiple column sets. close with EndColumns().
     IMGUI_API void          EndColumns();                                                               // close columns
     IMGUI_API void          PushColumnClipRect(int column_index);
     IMGUI_API void          PushColumnsBackground();
     IMGUI_API void          PopColumnsBackground();
     IMGUI_API ImGuiID       GetColumnsID(const char* str_id, int count);
-    IMGUI_API ImGuiOldColumns* FindOrCreateColumns(ImGuiWindow* window, ImGuiID id);
+    IMGUI_API ImGuiOldColumns* FindOrCreateColumns(ImGuiController* window, ImGuiID id);
     IMGUI_API float         GetColumnOffsetFromNorm(const ImGuiOldColumns* columns, float offset_norm);
     IMGUI_API float         GetColumnNormFromOffset(const ImGuiOldColumns* columns, float offset);
 
@@ -3499,9 +3499,9 @@ namespace ImGui
     IMGUI_API void          TabBarQueueReorder(ImGuiTabBar* tab_bar, ImGuiTabItem* tab, int offset);
     IMGUI_API void          TabBarQueueReorderFromMousePos(ImGuiTabBar* tab_bar, ImGuiTabItem* tab, ImVec2 mouse_pos);
     IMGUI_API bool          TabBarProcessReorder(ImGuiTabBar* tab_bar);
-    IMGUI_API bool          TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, ImGuiTabItemFlags flags, ImGuiWindow* docked_window);
+    IMGUI_API bool          TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, ImGuiTabItemFlags flags, ImGuiController* docked_window);
     IMGUI_API ImVec2        TabItemCalcSize(const char* label, bool has_close_button_or_unsaved_marker);
-    IMGUI_API ImVec2        TabItemCalcSize(ImGuiWindow* window);
+    IMGUI_API ImVec2        TabItemCalcSize(ImGuiController* window);
     IMGUI_API void          TabItemBackground(ImDrawList* draw_list, const ImRect& bb, ImGuiTabItemFlags flags, ImU32 col);
     IMGUI_API void          TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, ImGuiTabItemFlags flags, ImVec2 frame_padding, const char* label, ImGuiID tab_id, ImGuiID close_button_id, bool is_contents_visible, bool* out_just_closed, bool* out_text_clipped);
 
@@ -3543,10 +3543,10 @@ namespace ImGui
     IMGUI_API bool          CollapseButton(ImGuiID id, const ImVec2& pos);
     IMGUI_API void          Scrollbar(ImGuiAxis axis);
     IMGUI_API bool          ScrollbarEx(const ImRect& bb, ImGuiID id, ImGuiAxis axis, ImS64* p_scroll_v, ImS64 avail_v, ImS64 contents_v, ImDrawFlags flags);
-    IMGUI_API ImRect        GetWindowScrollbarRect(ImGuiWindow* window, ImGuiAxis axis);
-    IMGUI_API ImGuiID       GetWindowScrollbarID(ImGuiWindow* window, ImGuiAxis axis);
-    IMGUI_API ImGuiID       GetWindowResizeCornerID(ImGuiWindow* window, int n); // 0..3: corners
-    IMGUI_API ImGuiID       GetWindowResizeBorderID(ImGuiWindow* window, ImGuiDir dir);
+    IMGUI_API ImRect        GetWindowScrollbarRect(ImGuiController* window, ImGuiAxis axis);
+    IMGUI_API ImGuiID       GetWindowScrollbarID(ImGuiController* window, ImGuiAxis axis);
+    IMGUI_API ImGuiID       GetWindowResizeCornerID(ImGuiController* window, int n); // 0..3: corners
+    IMGUI_API ImGuiID       GetWindowResizeBorderID(ImGuiController* window, ImGuiDir dir);
 
     // Widgets low-level behaviors
     IMGUI_API bool          ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool* out_held, ImGuiButtonFlags flags = 0);
@@ -3603,8 +3603,8 @@ namespace ImGui
 
     // Garbage collection
     IMGUI_API void          GcCompactTransientMiscBuffers();
-    IMGUI_API void          GcCompactTransientWindowBuffers(ImGuiWindow* window);
-    IMGUI_API void          GcAwakeTransientWindowBuffers(ImGuiWindow* window);
+    IMGUI_API void          GcCompactTransientWindowBuffers(ImGuiController* window);
+    IMGUI_API void          GcAwakeTransientWindowBuffers(ImGuiController* window);
 
     // Debug Tools
     IMGUI_API void          DebugAllocHook(ImGuiDebugAllocInfo* info, int frame_count, void* ptr, size_t size); // size >= 0 : alloc, size = -1 : free
@@ -3624,7 +3624,7 @@ namespace ImGui
     IMGUI_API void          ShowFontAtlas(ImFontAtlas* atlas);
     IMGUI_API void          DebugHookIdInfo(ImGuiID id, ImGuiDataType data_type, const void* data_id, const void* data_id_end);
     IMGUI_API void          DebugNodeColumns(ImGuiOldColumns* columns);
-    IMGUI_API void          DebugNodeDrawList(ImGuiWindow* window, ImGuiViewportP* viewport, const ImDrawList* draw_list, const char* label);
+    IMGUI_API void          DebugNodeDrawList(ImGuiController* window, ImGuiViewportP* viewport, const ImDrawList* draw_list, const char* label);
     IMGUI_API void          DebugNodeDrawCmdShowMeshAndBoundingBox(ImDrawList* out_draw_list, const ImDrawList* draw_list, const ImDrawCmd* draw_cmd, bool show_mesh, bool show_aabb);
     IMGUI_API void          DebugNodeFont(ImFont* font);
     IMGUI_API void          DebugNodeFontGlyph(ImFont* font, const ImFontGlyph* glyph);
@@ -3635,10 +3635,10 @@ namespace ImGui
     IMGUI_API void          DebugNodeInputTextState(ImGuiInputTextState* state);
     IMGUI_API void          DebugNodeTypingSelectState(ImGuiTypingSelectState* state);
     IMGUI_API void          DebugNodeMultiSelectState(ImGuiMultiSelectState* state);
-    IMGUI_API void          DebugNodeWindow(ImGuiWindow* window, const char* label);
+    IMGUI_API void          DebugNodeWindow(ImGuiController* window, const char* label);
     IMGUI_API void          DebugNodeWindowSettings(ImGuiWindowSettings* settings);
-    IMGUI_API void          DebugNodeWindowsList(ImVector<ImGuiWindow*>* windows, const char* label);
-    IMGUI_API void          DebugNodeWindowsListByBeginStackParent(ImGuiWindow** windows, int windows_size, ImGuiWindow* parent_in_begin_stack);
+    IMGUI_API void          DebugNodeWindowsList(ImVector<ImGuiController*>* windows, const char* label);
+    IMGUI_API void          DebugNodeWindowsListByBeginStackParent(ImGuiController** windows, int windows_size, ImGuiController* parent_in_begin_stack);
     IMGUI_API void          DebugNodeViewport(ImGuiViewportP* viewport);
     IMGUI_API void          DebugRenderKeyboardPreview(ImDrawList* draw_list);
     IMGUI_API void          DebugRenderViewportThumbnail(ImDrawList* draw_list, ImGuiViewportP* viewport, const ImRect& bb);
