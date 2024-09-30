@@ -1,4 +1,5 @@
 #pragma once
+#include"iostream"
 #include"GLAD/include/glad/glad.h"
 
 namespace GLibrary
@@ -6,6 +7,20 @@ namespace GLibrary
 	class Translater
 	{
 	public:
+		static void Print(glm::mat4 matrix, int width = 10)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					std::cout.width(width);
+					std::cout << matrix[i][j];
+				}
+				std::cout << std::endl;
+			}
+			std::cout << std::endl;
+		}
+
 		template<typename T>
 		static unsigned int TemplateToGLenum()
 		{

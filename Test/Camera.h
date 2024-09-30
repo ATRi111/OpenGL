@@ -16,11 +16,9 @@ protected:
 	virtual void UpdateProjMatrix() = 0;
 public:
 	Camera()
+		:position(0, 0, -10), viewMatrix(1), projectionMatrix(1), viewportMatrix(1)
 	{
-		position = glm::vec3(0, 0, -10.0f);
-		viewMatrix = glm::mat4(1);
-		projectionMatrix = glm::mat4(1);
-		viewportMatrix = glm::mat4(1);
+
 	}
 	virtual ~Camera()
 	{
@@ -52,11 +50,10 @@ protected:
 	}
 	virtual void UpdateProjMatrix() override
 	{
-		std::cout << left << "|" << right << "|" << bottom << "|" << top << "|" << zNear << "|" << zFar << std::endl;
 		projectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
 	}
 public:
-	OrthographicCamera(float width, float height, float near = 0, float far = 100)
+	OrthographicCamera(float width, float height, float near = -100, float far = 100)
 		:Camera(), width(width), height(height), near(near), far(far)
 	{
 		left = position.x - 0.5f * width;

@@ -53,7 +53,8 @@ int main(int argc, char* argv[])
 
     OrthographicCamera camera(1.6f, 1.0f);
     GameObject obj;
-
+    obj.SetRotation(glm::vec3(45.0f, 0, 0));
+    Translater::Print(obj.ModelMatrix());
     program.SetUniformMat4f("u_modelMatrix", obj.ModelMatrix());
     program.SetUniformMat4f("u_viewMatrix", camera.ViewMatrix());
     program.SetUniformMat4f("u_projectionMatrix", camera.ProjectionMatrix());
