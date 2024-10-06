@@ -10,11 +10,10 @@ namespace GLibrary
 		unsigned int count;
 		unsigned int size;
 	public:
-		IndexBuffer(const void* data, unsigned long size, unsigned int usage, unsigned int dataType = GL_UNSIGNED_INT)
-			:Buffer(data, size, usage), size(size), count(size / Translater::SizeOfGLenum(dataType)), dataType(dataType)
+		IndexBuffer()
+			:Buffer(), count(-1), size(-1), dataType(-1)
 		{
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
+			
 		}
 
 		unsigned int BufferType() const override
@@ -32,6 +31,19 @@ namespace GLibrary
 		unsigned long Size() const
 		{
 			return size;
+		}
+
+		void SetData(const void* data, unsigned long size, unsigned int usage) override
+		{
+			SetData(data, size, usage, GL_UNSIGNED_INT);
+		}
+		void SetData(const void* data, unsigned long size, unsigned int usage, unsigned int dataType)
+		{
+			this->size = size;
+			this->dataType = dataType;
+			count = size / Translater::SizeOfGLenum(dataType);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
 		}
 	};
 }

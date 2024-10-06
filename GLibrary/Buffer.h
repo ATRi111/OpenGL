@@ -8,7 +8,7 @@ namespace GLibrary
 	protected:
 		unsigned int id;
 	public:
-		Buffer(const void* data, unsigned long size, unsigned int usage)
+		Buffer()
 		{
 			glGenBuffers(1, &id);
 		}
@@ -32,5 +32,7 @@ namespace GLibrary
 		{
 			glBindBuffer(BufferType(), 0);
 		}
+
+		virtual void SetData(const void* data, unsigned long size, unsigned int usage) = 0;
 	};
 }

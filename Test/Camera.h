@@ -13,10 +13,10 @@ protected:
 	glm::vec3 position;
 
 	virtual void UpdateViewMatrix() = 0;
-	virtual void UpdateProjMatrix() = 0;
+	virtual void UpdateProjectionMatrix() = 0;
 public:
 	Camera()
-		:position(0, 0, -10), viewMatrix(1), projectionMatrix(1), viewportMatrix(1)
+		:position(0, 0, 10), viewMatrix(1), projectionMatrix(1), viewportMatrix(1)
 	{
 
 	}
@@ -32,7 +32,7 @@ public:
 	{
 		this->position = position;
 		UpdateViewMatrix();
-		UpdateProjMatrix();
+		UpdateProjectionMatrix();
 	}
 };
 
@@ -40,30 +40,22 @@ class OrthographicCamera : public Camera
 {
 protected:
 	float width, height;
-	float left, right, bottom, top;
 	float near, far;
-	float zNear, zFar;
 	void UpdateViewMatrix() override
 	{
 		glm::mat4 T = glm::translate(glm::mat4(1), -position);
 		viewMatrix = T;
 	}
-	virtual void UpdateProjMatrix() override
+	virtual void UpdateProjectionMatrix() override
 	{
-		projectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
+		projectionMatrix = glm::ortho(-0.5f * width, 0.5f * width, -0.5f * height, 0.5f * height, near, far);
 	}
 public:
-	OrthographicCamera(float width, float height, float near = -100, float far = 100)
+	OrthographicCamera(float width, float height, float near = 1, float far = 100)
 		:Camera(), width(width), height(height), near(near), far(far)
 	{
-		left = position.x - 0.5f * width;
-		right = left + width;
-		bottom = position.y - 0.5f * height;
-		top = bottom + height;
-		zNear = position.z + near;
-		zFar = position.z + far;
 		UpdateViewMatrix();
-		UpdateProjMatrix();
+		UpdateProjectionMatrix();
 	}
 	~OrthographicCamera()
 	{
@@ -76,27 +68,21 @@ public:
 	void SetWidth(float width)
 	{
 		this->width = width;
-		left = position.x - 0.5f * width;
-		right = left + width;
 		UpdateViewMatrix();
 	}
 	void SetHeight(float height)
 	{
 		this->height = height;
-		bottom = position.y - 0.5f * height;
-		top = bottom + height;
 		UpdateViewMatrix();
 	}
 	void SetNear(float near)
 	{
 		this->near = near;
-		zNear = position.z + near;
 		UpdateViewMatrix();
 	}
 	void SetFar(float far)
 	{
 		this->far = far;
-		zFar = position.z + far;
 		UpdateViewMatrix();
 	}
 };

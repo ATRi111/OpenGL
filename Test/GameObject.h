@@ -16,7 +16,7 @@ protected:
 	glm::mat4 modelMatrix;
 	void UpdateModelMatrix()
 	{
-		modelMatrix = S * R * T;
+		modelMatrix = T * R * S;
 	}
 public:
 	GameObject()
@@ -24,7 +24,7 @@ public:
 	{
 
 	}
-	~GameObject()
+	virtual ~GameObject()
 	{
 
 	}

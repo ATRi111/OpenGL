@@ -12,7 +12,6 @@ namespace GLibrary
 		VertexArray()
 		{
 			glGenVertexArrays(1, &id);
-			glBindVertexArray(id);
 		}
 		~VertexArray()
 		{

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="DebugController.h" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GLAD\GLAD.vcxproj">
