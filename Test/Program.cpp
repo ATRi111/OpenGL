@@ -28,9 +28,12 @@ int main(int argc, char* argv[])
     GLFWController::EnableBlend();
 
     OrthographicCamera camera(1.6f, 1.0f);
+
     Texture2D texture = Texture2D::ParseFile(texturePath);
-    
+    texture.Bind();
+
     Sprite sp(texture, 1446);
+    Sprite sp2(texture, 1446);
 
     IndexBuffer ib;
     ib.SetData(indicies, sizeof(indicies), GL_STATIC_DRAW);
@@ -55,6 +58,7 @@ int main(int argc, char* argv[])
         windowController.NewFrame();
 
         renderer.Draw(sp.VA(), ib, program);
+        renderer.Draw(sp2.VA(), ib, program);
 
         windowController.ShowWindow();
        

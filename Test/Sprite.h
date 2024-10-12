@@ -30,10 +30,10 @@ public:
 			r,t,0, 1,1,
 			l,t,0, 0,1,
 		};
-		vb.SetData(vertices, VertexCount * layout.Stride(), GL_STATIC_DRAW);
 
 		layout.AddProperty<float>(0, 3);	//position
 		layout.AddProperty<float>(1, 2);	//uv
+		vb.SetData(vertices, VertexCount * layout.Stride(), GL_STATIC_DRAW);
 		va.SetLayout(layout);
 	}
 	~Sprite()
