@@ -103,25 +103,21 @@ namespace GLibrary
 #pragma region Uniform
         void SetUniform1i(const char* name, int i) const
         {
-            Bind();
             int location = GetUniformLocation(name);
             glUniform1i(location, i);
         }
         void SetUniform1f(const char* name, float f) const
         {
-            Bind();
             int location = GetUniformLocation(name);
             glUniform1f(location, f);
         }
         void SetUniform4f(const char* name, float f1, float f2, float f3, float f4) const
         {
-            Bind();
             int location = GetUniformLocation(name);
             glUniform4f(location, f1, f2, f3, f4);
         }
         void SetUniformMat4f(const char* name, const glm::mat4& matrix) const
         {
-            Bind();
             int location = GetUniformLocation(name);
             glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
         }

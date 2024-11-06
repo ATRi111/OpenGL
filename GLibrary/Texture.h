@@ -32,7 +32,7 @@ namespace GLibrary
 
 		void Bind(unsigned int slot = 0) const
 		{
-			glActiveTexture(slot);
+			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, id);
 		}
 		void UnBind() const

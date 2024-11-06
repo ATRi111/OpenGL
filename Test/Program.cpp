@@ -9,12 +9,6 @@
 using namespace GLibrary;
 using namespace std;
 
-unsigned int indicies[] =
-{
-    0,1,2,
-    2,3,0,
-};
-
 int main(int argc, char* argv[])
 {
     string solutionDir = argv[0];
@@ -30,21 +24,19 @@ int main(int argc, char* argv[])
     OrthographicCamera camera(1.6f, 1.0f);
 
     Texture2D texture = Texture2D::ParseFile(texturePath);
-    texture.Bind();
+    texture.Bind(1);
 
-    Sprite sp(texture, 1446);
-    Sprite sp2(texture, 1446);
+    DefaultSprite sp(texture, 1446);
 
-    IndexBuffer ib;
-    ib.SetData(indicies, sizeof(indicies), GL_STATIC_DRAW);
+    GameObject obj1;
 
     ShaderProgram program = ShaderProgram::ParseFile(shaderPath);
     program.Link();
     program.Bind();
 
     program.SetUniform4f("u_Color", 1, 0, 1, 1);
-    program.SetUniform1i("u_Texture", 0);
-    program.SetUniformMat4f("u_modelMatrix", sp.ModelMatrix());
+    program.SetUniform1i("u_Texture", 1);
+    program.SetUniformMat4f("u_modelMatrix", obj1.ModelMatrix());
     program.SetUniformMat4f("u_viewMatrix", camera.ViewMatrix());
     program.SetUniformMat4f("u_projectionMatrix", camera.ProjectionMatrix());
 
@@ -57,8 +49,7 @@ int main(int argc, char* argv[])
 
         windowController.NewFrame();
 
-        renderer.Draw(sp.VA(), ib, program);
-        renderer.Draw(sp2.VA(), ib, program);
+        renderer.Draw(sp.VA(), sp.IB(), program);
 
         windowController.ShowWindow();
        
