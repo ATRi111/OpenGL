@@ -21,7 +21,9 @@ int main(int argc, char* argv[])
     DebugController debugController;
     GLFWController::EnableBlend();
 
-    OrthographicCamera camera(1.6f, 1.0f);
+    OrthographicCamera camera;
+    camera.SetWidth(1.6f);
+    camera.SetHeight(1.0f);
 
     Texture2D texture = Texture2D::ParseFile(texturePath);
     texture.Bind(1);
@@ -29,6 +31,7 @@ int main(int argc, char* argv[])
     DefaultSprite sp(texture, 1446);
 
     GameObject obj1;
+    obj1.SetPosition(glm::vec3(0, 0, -1));
 
     ShaderProgram program = ShaderProgram::ParseFile(shaderPath);
     program.Link();
